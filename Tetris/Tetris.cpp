@@ -133,6 +133,25 @@ void Tetris::updateWindow()
     // 1. 在 x = 0, y = 0 位置绘制背景图片
     putimage(0, 0, &imgBg);
 
+    // 2. 获取imgs | 7种方块类型对应的小图片
+    IMAGE** imgs = Block::getImages();
+
+    /* 为了保证画面不闪烁， 应该一次性绘制画好之后， 再渲染   BeginBatchDraw */
+    BeginBatchDraw();
+
+    // 3. 判断地图（map）若该位置上的值为0， 则是空白地方
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            if (map[i][j] == 0) {
+                continue ;
+            }
+            // 4. 若map[i][j] 有值则计算坐标, 后续绘制
+            int x = leftMargin + j * blockSize;
+            int y = topMargin + i * blockSize;
+            // 5. 在该坐标处绘制方块 | 方块种类 map[i][j] 从1开始 | 但是imgs从0下标开始
+            putimage(x, y, imgs[map[i][j] - 1]);
+        }
+    }
 
     // 测试方块
     // Block block;
@@ -140,6 +159,7 @@ void Tetris::updateWindow()
     curBlock->draw(leftMargin, topMargin);
     nextBlock->draw(689, 150);  // 预告方块放在右上角
 
+    EndBatchDraw();
 
 }
 /**

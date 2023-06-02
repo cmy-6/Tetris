@@ -43,6 +43,11 @@ public:
      * @param topMargin
      */
     void draw(int leftMargin, int topMargin);
+
+    /*
+    * @brief : 为了获取私有 static IMAGE* imgs[7]  数据 | 7种类型的方块 img存储在 imgs指针数组中
+    */
+    static IMAGE** getImages();    
 private:
     int blockType;  // 方块的类型， 应当属于这个Block类的属性成员
     /**
@@ -61,6 +66,10 @@ private:
        这个类的静态成员：每个Block 对象都可以使用这个成员， 但是其不属于每一个对象， 而是属于所有的Block
      */
     static IMAGE* imgs[7];  // 7种图案
+    // int data[7]   ->   int* getData() | 获取int 型的Data数组
+    // int* data[7]  ->   int** getData()
+
+
     static int size;        // 图片大小
 
 

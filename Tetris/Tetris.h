@@ -60,6 +60,7 @@ private:
     // C++ 的STL 方便拓展
     /**
      * 0: 空白， 没有任何方块
+     * 1 - 7 
      * 5: 是第5种俄罗斯方块
      */
     vector<vector<int>> map;
@@ -76,5 +77,7 @@ private:
     Block* curBlock;    // 当前方块
     Block* nextBlock;   // 下一个预告方块
 
+
+    // 问题Tip 1: 当方块降落到最下面停止不动了， 这个情况如何分析？
 };
 
