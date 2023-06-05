@@ -38,7 +38,7 @@ private:
 
     /**
      * @brief getDelay : 返回距离上一次调用该函数， 间隔了多少时间（ms） | 第一次调用该函数， 返回0
-     * @return
+     * @return : int
      */
     int getDelay();
 
@@ -77,7 +77,10 @@ private:
     Block* curBlock;    // 当前方块
     Block* nextBlock;   // 下一个预告方块
 
+    // 这里用指针， 那就没有备份作用了
+    Block bakBlock;     // 当前方块降落过程中， 用来备份上一个合法位置的！（最终方块会落到底下）
 
     // 问题Tip 1: 当方块降落到最下面停止不动了， 这个情况如何分析？
+    // 问题Tip 2: 俄罗斯方块的左右移动
 };
 

@@ -53,10 +53,10 @@ Block::Block()
      * 创建俄罗斯方块时， 其类型 blockType 已知，这种类型里具体的四个小方块的推算如下：第几行， 第几列
      */
     for (int i = 0; i < 4; ++i) {
-        int value = blocks[blockType - 1][i];
+        int value = blocks[blockType - 1][i]; // 1 3 5 7
         // Point smallBlocks[4];   // 此结构体数组存储一个俄罗斯方块的4个小方块的row与col | 一个俄罗斯方块的位置 | 第几行第几列
-        smallBlocks[i].row = value / 2;
-        smallBlocks[i].col = value % 2;
+        smallBlocks[i].row = value / 2;         // 0 1 2 3
+        smallBlocks[i].col = value % 2;         // 1 1 1 1
     }
 
     // 4. 本身图片指向哪一个 | 确定好方块类型， 各个小方块的位置
@@ -67,11 +67,20 @@ Block::Block()
 
 }
 /**
- * @brief drop 下降
+ * @brief drop 俄罗斯方块下降
+ * smallBlocks
  */
 void Block::drop()
 {
+    // 在俄罗斯方块中有四个小方块Point 修改4个小方块的下标
+    //for (int i = 0; i < 4; ++i) {
+    //    smallBlocks[i].row++;
+    //}
 
+    // C++ 11 写法 | 每一次取出的 smallBlocks[i] 0 1 2 3 即block引用（即会修改原数组的值）
+    for (auto& block : smallBlocks) {
+        block.row++;
+    }
 }
 /**
  * @brief moveLeftRight : 根据offset 来让方块左移动或者右移动
@@ -111,3 +120,54 @@ IMAGE** Block::getImages()
 
     return imgs;
 }
+// & other ： 这个&是引用 | 另一个对象other
+Block& Block::operator=(const Block& other)
+{
+    // TODO: 在此处插入 return 语句
+    // 自己赋值自己是错误的 | 若另一个对象的地址等于这个指针本身, 则返回this对象的引用
+    if (this == &other) return *this;
+    // 其他情况
+    this->blockType = other.blockType;
+    for (int i = 0; i < 4; ++i) {
+        this->smallBlocks[i] = other.smallBlocks[i];
+    }
+
+    return *this;
+
+
+
+}
+// 方块自身方法：判断数据的有效性
+bool Block::blockInMap(const vector<vector<int>>& map)
+{
+    int rows = map.size();
+    int cols = map[0].size();
+    // 判断一个俄罗斯方块的四个方块坐标有没有越界且地图上该位置上有没有方块
+    for (int i = 0; i < 4; ++i)
+    {
+        if (smallBlocks[i].col < 0 || smallBlocks[i].col >= cols ||
+            smallBlocks[i].row < 0 || smallBlocks[i].row >= rows ||
+            map[smallBlocks[i].row][smallBlocks[i].col])
+        {
+            return false;
+        }
+    }
+    return true;
+}
+// 固化：bakBlock.solidify(map); 
+// bakBlock是上一个在合法有效位置的俄罗斯方块（Tetris ---> drop之前）
+void Block::solidify(vector<vector<int>>& map)
+{
+    // 空白位置处理 -> blockType 
+    // 设置标记， “固化”对应的位置
+    for (int i = 0; i < 4; ++i)
+    {
+        map[smallBlocks[i].row][smallBlocks[i].col] = blockType;
+    }
+}
+
+//Point* Block::getSmallBlocks()
+//{
+//
+//    return nullptr;
+//}

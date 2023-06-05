@@ -1,6 +1,7 @@
 #pragma once
 #include <graphics.h>   // 需要先安装easyx图形库
-
+#include <vector>
+using namespace std;
 // ! 一个俄罗斯方块到底在屏幕的第几行第几列， 可以定义一个结构体(而一个俄罗斯方块有四个小方块)
 struct Point {
     int row;
@@ -46,8 +47,33 @@ public:
 
     /*
     * @brief : 为了获取私有 static IMAGE* imgs[7]  数据 | 7种类型的方块 img存储在 imgs指针数组中
+    * @return : IMAGE**
     */
-    static IMAGE** getImages();    
+    static IMAGE** getImages(); 
+
+    /** 
+    * @brief : 运算符重载 | 赋值构造函数
+    * @return : Block
+    */
+    Block& operator=(const Block& other);
+
+    /**
+    * @brief : 获取私有SmallBlocks数组->得到这个数据后到Tetris类中进行判断
+    * @return : Point*
+    */
+    //Point* getSmallBlocks();
+
+    /**
+    * @brief : 判断方块是否在地图中
+    * @return : bool
+    */
+    bool blockInMap(const vector<vector<int>>& map);
+    
+    /**
+    * @brief : 方块的固化功能， 改变map中的数据
+    */
+    void solidify(vector<vector<int>>& map);
+
 private:
     int blockType;  // 方块的类型， 应当属于这个Block类的属性成员
     /**

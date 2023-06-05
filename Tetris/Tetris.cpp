@@ -125,7 +125,8 @@ void Tetris::play()
 
 void Tetris::keyEvent()
 {
-    // to do.
+    // TODO.
+
 }
 
 void Tetris::updateWindow()
@@ -136,7 +137,7 @@ void Tetris::updateWindow()
     // 2. 获取imgs | 7种方块类型对应的小图片
     IMAGE** imgs = Block::getImages();
 
-    /* 为了保证画面不闪烁， 应该一次性绘制画好之后， 再渲染   BeginBatchDraw */
+    /* 为了保证画面不闪烁， 应该一次性绘制画好之后， 再渲染   BeginBatchDraw ---- EndBatchDraw */
     BeginBatchDraw();
 
     // 3. 判断地图（map）若该位置上的值为0， 则是空白地方
@@ -192,6 +193,29 @@ int Tetris::getDelay()
 
 void Tetris::drop()
 {
+    // 对象的赋值要注意了
+    // 赋值构造函数 operator=
+    // 1. 备用方块保存 | 上一个位置的合法位 | 保存完再降落
+    bakBlock = *curBlock;
+
+
+
+    // 方块降落应该由方块类来实现 | 俄罗斯方块本身的特性
+    curBlock->drop();
+
+    // 下降过程中， 要判断方块是否到底部 | 封装思想 | 由Block类提供API 
+    // 2. 若方块降到底部了：把这个方块“固化”
+    if (!curBlock->blockInMap(map))
+    {
+        bakBlock.solidify(map); // 方块固化
+
+        // 3. 固化之后， 就把当前方块更新为预告的方块， 再让预告方块生成新方块
+        delete curBlock;    // ①
+        curBlock = nextBlock;   // ②
+        nextBlock = new Block;  // ③
+
+    }
+
 
 }
 
