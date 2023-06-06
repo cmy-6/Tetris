@@ -52,7 +52,11 @@ private:
      */
     void clearLine();
 
-    // 私有数据成员
+    // 方块的左右移动
+    void moveLeftRight(int offset);
+
+
+// 私有数据成员
 private:
     int delay;      // 刷新时间间隔
     bool update;    // 是否更新

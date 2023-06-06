@@ -1,6 +1,7 @@
 #include "Tetris.h"
 #include <time.h>
 #include <stdlib.h>
+#include <conio.h>  // 控制台IO输出
 
 // 游戏速度划分
 const int SPEED_NORMAL = 500;   // ms
@@ -125,8 +126,57 @@ void Tetris::play()
 
 void Tetris::keyEvent()
 {
+    bool rotateFlag = false;    // 旋转标记
+    unsigned char ch;    // 接收键盘输入 0..255
+    int dx = 0; // 左右移动的偏移
     // TODO.
+    // 使用getchar() 则需要按回车才会确定， 不符合逻辑
+    // kbhit用来检测键盘是否有按键,有则返回-1,没有则返回0;
+    if (_kbhit())
+    {
+        // 如果想知道按下了什么键,应该用_getch()来获取(键值已经输入缓冲区,_getch从缓冲区中取得而非再从键盘输入)
+        ch = _getch();
+        // 对于方向键， 会自动返回两个字符
+        // 按 向上方向键， 会先后返回：224 72
+        // 按 向下方向键， 会先后返回：224 80
+        // 按 向左方向键， 会先后返回：224 75
+        // 按 向右方向键， 会先后返回：224 77
+        if (ch == 224) {
+            ch = _getch();
+            switch (ch)
+            {
+            case 72:
+                rotateFlag = true;  // 标记为旋转
+                break;
+            case 80:
+                delay = SPEED_QUICK;    // 加速下落
+                break;
+            case 75:
+                dx = -1;    // 左移动
+                break;
+            case 77:
+                dx = 1;     // 右移动
+                break;
+            default:
+                break;   
+            }
+        }
+    }
 
+    if (rotateFlag)
+    {
+        // TODO. 待实现， 做旋转处理
+
+    }
+
+    if (dx != 0)
+    {
+        // TODO. 实现左右移动
+        moveLeftRight(dx);  // 注意按键左右移动后， 画面需要马上更新
+        update = true;  // 画面更新
+    }
+
+    
 }
 
 void Tetris::updateWindow()
@@ -137,7 +187,7 @@ void Tetris::updateWindow()
     // 2. 获取imgs | 7种方块类型对应的小图片
     IMAGE** imgs = Block::getImages();
 
-    /* 为了保证画面不闪烁， 应该一次性绘制画好之后， 再渲染   BeginBatchDraw ---- EndBatchDraw */
+    /* 为了保证画面不闪烁， 应该一次性绘制画好之后， 再渲染  BeginBatchDraw ---- EndBatchDraw */
     BeginBatchDraw();
 
     // 3. 判断地图（map）若该位置上的值为0， 则是空白地方
@@ -191,6 +241,7 @@ int Tetris::getDelay()
     }
 }
 
+// 降落时， 注意有无超出边界 | 备份
 void Tetris::drop()
 {
     // 对象的赋值要注意了
@@ -216,10 +267,24 @@ void Tetris::drop()
 
     }
 
+    // 下降之后， 就还原成正常的速度
+    delay = SPEED_NORMAL;
+
 
 }
 
 void Tetris::clearLine()
 {
     // To do.
+}
+
+// 在移动的时候要注意有无超出边界 | 备份
+void Tetris::moveLeftRight(int offset)
+{
+    bakBlock = *curBlock;   // 备份合法方块
+    curBlock->moveLeftRight(offset);  // 方块自身左右移动
+
+    if (!curBlock->blockInMap(map)) {
+        *curBlock = bakBlock;
+    }
 }
