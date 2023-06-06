@@ -55,6 +55,8 @@ private:
     // 方块的左右移动
     void moveLeftRight(int offset);
 
+    void rotate();  // 旋转
+
 
 // 私有数据成员
 private:

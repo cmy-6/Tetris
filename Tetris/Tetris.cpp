@@ -165,7 +165,10 @@ void Tetris::keyEvent()
 
     if (rotateFlag)
     {
-        // TODO. 待实现， 做旋转处理
+        // TODO. 待实现， 做旋转处理 | 真正实现由方块类来完成
+        rotateFlag = false; // 恢复初值
+        rotate();
+        update = true;
 
     }
 
@@ -284,6 +287,20 @@ void Tetris::moveLeftRight(int offset)
     bakBlock = *curBlock;   // 备份合法方块
     curBlock->moveLeftRight(offset);  // 方块自身左右移动
 
+    if (!curBlock->blockInMap(map)) {
+        *curBlock = bakBlock;
+    }
+}
+
+void Tetris::rotate()
+{
+    // 田字形方块没有旋转意义
+    if (curBlock->getBlockType() == 7) return;
+
+    bakBlock = *curBlock;   // 备份合法方块
+    curBlock->rotate();
+
+    // 不合法位置即还原
     if (!curBlock->blockInMap(map)) {
         *curBlock = bakBlock;
     }

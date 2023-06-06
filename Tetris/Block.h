@@ -74,6 +74,9 @@ public:
     */
     void solidify(vector<vector<int>>& map);
 
+    // 获取方块类型
+    int getBlockType();
+
 private:
     int blockType;  // 方块的类型， 应当属于这个Block类的属性成员
     /**

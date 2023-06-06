@@ -98,7 +98,14 @@ void Block::moveLeftRight(int offset)
  */
 void Block::rotate()
 {
-
+    // 选定旋转的中心， 这里选择[1]
+    Point p = smallBlocks[1];   
+    for (int i = 0; i < 4; ++i)
+    {
+        Point tmp = smallBlocks[i];
+        smallBlocks[i].col = p.col - tmp.row + p.row;
+        smallBlocks[i].row = p.row + tmp.col - p.col;
+    }
 }
 /**
  * @brief draw: 画方块取决于方块游戏其左侧边界和顶部边界有多大
@@ -167,6 +174,11 @@ void Block::solidify(vector<vector<int>>& map)
     {
         map[smallBlocks[i].row][smallBlocks[i].col] = blockType;
     }
+}
+
+int Block::getBlockType()
+{
+    return blockType;
 }
 
 //Point* Block::getSmallBlocks()
