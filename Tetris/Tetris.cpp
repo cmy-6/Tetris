@@ -2,7 +2,8 @@
 #include <time.h>
 #include <stdlib.h>
 #include <conio.h>  // 控制台IO输出
-
+#include <mmsystem.h>
+#pragma comment(lib, "winmm.lib")
 // 游戏速度划分
 const int SPEED_NORMAL = 500;   // ms
 const int SPEED_QUICK = 50;
@@ -67,6 +68,8 @@ void Tetris::init()
         }
     }
 
+    // 初始化当前的分数为0
+    score = 0;
 
 
 }
@@ -213,6 +216,8 @@ void Tetris::updateWindow()
     curBlock->draw(leftMargin, topMargin);
     nextBlock->draw(689, 150);  // 预告方块放在右上角
 
+    drawScore();    // 绘制分数
+
     EndBatchDraw();
 
 }
@@ -278,7 +283,46 @@ void Tetris::drop()
 
 void Tetris::clearLine()
 {
+    int lines = 0;  // 判断消去的行数
     // To do.
+    // 双指针
+    int k = rows - 1;   // 存储数据的行数
+    for (int i = rows - 1; i >= 0; --i)
+    {
+        // 检查第行是否满行
+        int count = 0;
+        for (int j = 0; j < cols; ++j)
+        {
+            // 该位置有方块
+            if (map[i][j])
+            {
+                count++;
+            }
+            // 一边扫描一边存储 -> 但是若此行是要消掉的？
+            map[k][j] = map[i][j];  
+        }
+        if (count < cols)
+        {
+            // 不是满行
+            k--;
+        } // 若是满行，k不变， 下次循环就可以在这行上面覆盖
+        else
+        {
+            // count == cols   满行
+            lines++;
+        }
+    }
+
+    if (lines > 0)
+    {
+        // 计算得分  | 消除一行10分， 同时消除2行30分， 3 - 60， 4行80分
+        int addScore[4] = { 10, 30, 60, 80 };
+        score += addScore[lines - 1];
+        // 播放音效
+        mciSendString("play res/xiaochu1.mp3", 0, 0, 0);
+        update = true;  // 消除后要更新
+
+    }
 }
 
 // 在移动的时候要注意有无超出边界 | 备份
@@ -304,4 +348,27 @@ void Tetris::rotate()
     if (!curBlock->blockInMap(map)) {
         *curBlock = bakBlock;
     }
+}
+
+void Tetris::drawScore()
+{
+    char scoreText[32];
+
+    sprintf_s(scoreText, sizeof(scoreText), "%d", score);
+
+    // 设置字体颜色
+    setcolor(RGB(180, 180, 180));
+
+    LOGFONT f;
+    // 获取当前的字体
+    gettextstyle(&f);
+    f.lfHeight = 60;
+    f.lfWidth = 30;
+    f.lfQuality = ANTIALIASED_QUALITY;  // 设置字体为 “抗锯齿”效果
+    strcpy_s(f.lfFaceName, sizeof(f.lfFaceName), _T("Segoe UI Black"));
+    settextstyle(&f);
+
+    setbkmode(TRANSPARENT); // 字体的背景设置为透明效果
+
+    outtextxy(670, 727, scoreText);
 }

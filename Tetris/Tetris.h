@@ -57,7 +57,8 @@ private:
 
     void rotate();  // 旋转
 
-
+    // 绘制当前的分数
+    void drawScore();
 // 私有数据成员
 private:
     int delay;      // 刷新时间间隔
@@ -85,6 +86,8 @@ private:
 
     // 这里用指针， 那就没有备份作用了
     Block bakBlock;     // 当前方块降落过程中， 用来备份上一个合法位置的！（最终方块会落到底下）
+
+    int score;  // 当前的分数
 
     // 问题Tip 1: 当方块降落到最下面停止不动了， 这个情况如何分析？
     // 问题Tip 2: 俄罗斯方块的左右移动
